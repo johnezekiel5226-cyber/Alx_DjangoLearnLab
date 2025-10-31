@@ -1,16 +1,13 @@
-# Create a Book instance
-class Book:
-    def __init__(self, title, author, year):
-        self.title = title
-        self.author = author
-        self.year = year
+# Create Operation for Book Model
 
-books = []  # A simple list to store book instances
+```python
+from bookshelf.models import Book  # Replace 'bookshelf' with your app name if different
 
-# Create the book
-new_book = Book(title="1984", author="George Orwell", year=1949)
-books.append(new_book)
+# Create a new Book instance in the database
+new_book = Book.objects.create(title="1984", author="George Orwell", publication_year=1949)
+
+# Display the created book
+print(new_book)
 
 # Expected Output:
-# Book titled "1984" by George Orwell (1949) successfully created and added to the list.
-print(f'Book titled "{new_book.title}" by {new_book.author} ({new_book.year}) successfully created.')
+# <Book: 1984 by George Orwell (1949)>
