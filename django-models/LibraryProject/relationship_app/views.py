@@ -1,27 +1,16 @@
-from django.shortcuts import render
-from django.views.generic import DetailView
-from .models import Book, Library
-from .models import Library
-from django.views.generic.detail import DetailView
-# --- Function-based view using template ---
-def book_list(request):
-    """
-    List all books and their authors in HTML.
-    """
-    books = Book.objects.all()  # ✅ Query all books
-    return render(request, 'relationship_app/list_books.html', {'books': books})  # ✅ Use the template
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
-
-# --- Class-based view for library details ---
-class LibraryDetailView(DetailView):
-    """
-    Display a specific library and all books in it.
-    """
-    model = Library
-    context_object_name = 'library'
-    template_name = 'relationship_app/library_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['books'] = self.object.books.all()  # Books in this library
-        return context
+def register(request):
+    """Handle new user registration."""
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Account created successfully! You can now log in.")
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'relationship_app/register.html', {'form': form})
