@@ -1,17 +1,14 @@
-# query_samples.py
 import os
 import django
 
-# --- Setup Django environment manually (so this script can run independently) ---
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
+# --- Setup Django environment manually so this can run standalone ---
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.settings')
 django.setup()
 
 from relationship_app.models import Author, Book, Library, Librarian
 
 
-# -----------------------------
 # 1️⃣ Query all books by a specific author
-# -----------------------------
 def get_books_by_author(author_name):
     try:
         author = Author.objects.get(name=author_name)
@@ -23,9 +20,7 @@ def get_books_by_author(author_name):
         print(f"No author found with the name '{author_name}'.")
 
 
-# -----------------------------
 # 2️⃣ List all books in a library
-# -----------------------------
 def list_books_in_library(library_name):
     try:
         library = Library.objects.get(name=library_name)
@@ -37,13 +32,11 @@ def list_books_in_library(library_name):
         print(f"No library found with the name '{library_name}'.")
 
 
-# -----------------------------
-# 3️⃣ Retrieve the librarian for a library
-# -----------------------------
+# 3️⃣ Retrieve the librarian for a library (explicit query)
 def get_librarian_for_library(library_name):
     try:
         library = Library.objects.get(name=library_name)
-        librarian = library.librarian  # reverse OneToOneField lookup
+        librarian = Librarian.objects.get(library=library)  # ✅ explicit query
         print(f"Librarian for {library.name}: {librarian.name}")
     except Library.DoesNotExist:
         print(f"No library found with the name '{library_name}'.")
@@ -55,7 +48,7 @@ def get_librarian_for_library(library_name):
 # Run sample queries
 # -----------------------------
 if __name__ == "__main__":
-    # Change these values to match your database content
+    # Change these to match actual data in your DB
     get_books_by_author("J.K. Rowling")
     print("-" * 40)
     list_books_in_library("Central Library")
