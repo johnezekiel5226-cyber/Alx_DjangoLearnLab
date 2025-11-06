@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import admin_view, librarian_view, member_view
 
 urlpatterns = [
     # Book and Library Views
@@ -15,5 +16,9 @@ urlpatterns = [
 
     # Registration view (custom)
     path('register/', views.register, name='register'),
+    path('admin-dashboard/', admin_view.admin_dashboard, name='admin_dashboard'),
+    path('librarian-dashboard/', librarian_view.librarian_dashboard, name='librarian_dashboard'),
+    path('member-dashboard/', member_view.member_dashboard, name='member_dashboard'),
+
 ]
 
