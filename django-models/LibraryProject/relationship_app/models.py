@@ -5,9 +5,17 @@ from django.dispatch import receiver
 
 # Example existing model: Book
 class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.CharField(max_length=100)
-    published_date = models.DateField()
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    published_date = models.DateField(null=True, blank=True)
+    isbn = models.CharField(max_length=13, Unique=True)
+
+class Meta:
+        permissions = [
+            ("can_add_book", "Can add book"),
+            ("can_change_book", "Can change book"),
+            ("can_delete_book", "Can delete book"),
+        ]
 
     def __str__(self):
         return self.title
