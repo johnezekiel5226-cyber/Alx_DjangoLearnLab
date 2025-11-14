@@ -8,6 +8,9 @@ def create_book(request):
         ...
     return render(request, 'bookshelf/create_book.html')
 
+query = request.GET.get("q", "")
+books = Book.objects.filter(title__icontains=query)
+
 @permission_required('bookshelf.change_book', raise_exception=True)
 def edit_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
@@ -29,3 +32,17 @@ def delete_book(request, book_id):
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, 'bookshelf/book_detail.html', {'book': book})
+
+def search(request):
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        query = form.cleaned_data["q"]
+        results = Book.objects.filter(title__icontains=query)
+    else:
+        results = Book.objects.none()
+
+    return render(request, "bookshelf/search.html", {"form": form, "results": results})
+
+response = render(request, "bookshelf/index.html")
+response["Content-Security-Policy"] = "default-src 'self'"
+return response
