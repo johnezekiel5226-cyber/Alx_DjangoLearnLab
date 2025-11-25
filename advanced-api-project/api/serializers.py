@@ -12,3 +12,11 @@ class BookSerializer(serializers.ModelSerializer):
      class Meta:
         model = Book
         fields = ['id', 'title', 'author', 'publication_year', 'created_at']
+
+class AuthorSerializer(serializers.ModelSerializer):
+    # Nested relationship — an author can have many books
+    books = BookSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Author
+        fields = ['id', 'name', 'bio', 'books']
