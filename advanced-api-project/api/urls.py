@@ -4,7 +4,7 @@ from .views import (
     BookDetailView,
     BookCreateView,
     BookUpdateView,
-    BookDeleteView
+    BookDeleteView,
 )
 
 urlpatterns = [
@@ -17,9 +17,9 @@ urlpatterns = [
     # Create
     path('books/create/', BookCreateView.as_view(), name='book-create'),
 
-    # UPDATE — THIS IS THE ONE YOU ARE MISSING
+    # Update (THIS IS REQUIRED)
     path('books/<int:pk>/update/', BookUpdateView.as_view(), name='book-update'),
 
-    # DELETE — THIS IS THE ONE YOU ARE MISSING
+    # Delete (THIS IS REQUIRED)
     path('books/<int:pk>/delete/', BookDeleteView.as_view(), name='book-delete'),
 ]
