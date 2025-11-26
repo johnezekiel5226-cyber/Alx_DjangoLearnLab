@@ -1,9 +1,14 @@
 # api/views.py
+from rest_framework import generics
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import generics, permissions
 from rest_framework.exceptions import ValidationError
 from .models import Book
 from .serializers import BookSerializer
+from rest_framework.filters import OrderingFilter
+
 
 
 # -----------------------------
@@ -14,6 +19,20 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]
+
+# Add filtering support
+    filter_backends = [DjangoFilterBackend
+	DjangoFilterBackend, 
+        SearchFilter,
+        OrderingFilter
+     ]
+
+    # Attributes users can filter by
+    filterset_fields = ['title', 'author', 'publication_year']
+    # NEW: Enable search on text-based fields
+    search_fields = ['title', 'author']
+
+    ordering = ['title']
 
     # ADDED: Filtering by author
     def get_queryset(self):
