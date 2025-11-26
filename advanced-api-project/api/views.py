@@ -22,10 +22,10 @@ class BookListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
 # Add filtering support
-    filter_backends = [DjangoFilterBackend
-	DjangoFilterBackend, 
-        SearchFilter,
-        OrderingFilter
+    filter_backends = [
+	django_filters.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
      ]
 
     # Attributes users can filter by
