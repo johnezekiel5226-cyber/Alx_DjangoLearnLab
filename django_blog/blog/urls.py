@@ -18,8 +18,9 @@ path("profile/edit/", views.edit_profile, name="edit_profile"),
 path('post/new/', views.PostCreateView.as_view(), name='post-create'),
 path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),
 path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
+path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
 ]
-]
+
 
 urlpatterns = [
     path("register/", register, name="register"),
