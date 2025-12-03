@@ -1,0 +1,30 @@
+  GNU nano 8.5                post_detail.html
+
+
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ object.title }}</h1>
+<p>{{ object.content }}</p>
+
+<hr>
+<a href="{% url 'posts:post-update' object.pk %}" class="btn btn-warning">Edit</a>
+<a href="{% url 'posts:post-delete' object.pk %}" class="btn btn-danger">Delete</a>
+<a href="{% url 'posts:post-list' %}" class="btn btn-secondary">Back to List</a>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
