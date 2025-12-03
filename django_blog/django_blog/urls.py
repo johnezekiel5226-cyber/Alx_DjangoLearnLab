@@ -26,7 +26,7 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
 
     # Your custom authentication (register, profile)
-    path('', include('blog.urls')),
+    path('', include(('blog.urls'), namespace='posts')),
 ]
 
 if settings.DEBUG:
