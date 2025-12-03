@@ -1,4 +1,37 @@
-  GNU nano 8.5                post_detail.html
+
+{# blog/templates/blog/post_detail.html #}
+{% extends "blog/base.html" %}
+{% block content %}
+  <article>
+    <h1>{{ post.title }}</h1>
+    <p class="meta">By {{ post.author }} · {{ post.published_date|date:"M d, Y" }}</p>
+    <div class="body">{{ post.body|linebreaksbr }}</div>
+  </article>
+
+  <hr>
+
+  {# Include comments list #}
+  {% include "blog/_comments.html" %}
+
+  {# Add comment form for authenticated users #}
+  <div id="add-comment">
+    {% if user.is_authenticated %}
+      <h3>Leave a comment</h3>
+      <form method="post" action="{% url 'posts:comment_new' post.pk %}">
+        {% csrf_token %}
+        {{ comment_form.non_field_errors }}
+        <div>
+          {{ comment_form.content }}
+          {{ comment_form.content.errors }}
+        </div>
+        <button type="submit">Post comment</button>
+      </form>
+    {% else %}
+      <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to post a comment.</p>
+    {% endif %}
+  </div>
+
+{% endblock %}
 
 
 {% extends "base.html" %}

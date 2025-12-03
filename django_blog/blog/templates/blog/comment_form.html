@@ -1,0 +1,45 @@
+{# blog/templates/blog/_comments.html #}
+<div id="comments">
+  <h3>{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</h3>
+
+  {% for comment in post.comments.all %}
+    <div class="comment" id="comment-{{ comment.pk }}">
+      <p class="meta">
+        <strong>{{ comment.author.get_full_name|default:comment.author.username }}</strong>
+        <small> · {{ comment.created_at|date:"M d, Y H:i" }}</small>
+        {% if comment.updated_at and comment.updated_at|date:"U" > comment.created_at|date:"U" %}
+          <small>(edited {{ comment.updated_at|date:"M d, Y H:i" }})</small>
+        {% endif %}
+      </p>
+      <p class="content">{{ comment.content|linebreaksbr }}</p>
+      {% if user.is_authenticated and comment.author == user %}
+        <p class="comment-actions">
+          <a href="{% url 'posts:comment_edit' post.pk comment.pk %}">Edit</a> |
+          <a href="{% url 'posts:comment_delete' post.pk comment.pk %}">Delete</a>
+        </p>
+      {% endif %}
+    </div>
+    <hr>
+  {% empty %}
+    <p>No comments yet — be the first to comment.</p>
+  {% endfor %}
+</div>
+{# blog/templates/blog/comment_form.html #}
+{% extends "blog/base.html" %}
+{% block content %}
+  <h2>
+    {% if object %}Edit comment{% else %}Add comment{% endif %}
+  </h2>
+
+  <form method="post" action="">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.content }}
+      {{ form.content.errors }}
+    </div>
+    <button type="submit">{% if object %}Save changes{% else %}Post comment{% endif %}</button>
+    <a href="{{ post.get_absolute_url|default:object.post.get_absolute_url }}">Cancel</a>
+  </form>
+{% endblock %}
+

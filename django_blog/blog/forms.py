@@ -13,6 +13,24 @@ widgets = {
 'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
 }
 
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'rows':3, 'placeholder': 'Write a thoughtful comment...'}),
+        max_length=2000,
+        label='',
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+    def clean_content(self):
+        content = self.cleaned_data.get('content', '').strip()
+        if not content:
+            raise forms.ValidationError("Comment cannot be empty.")
+        if len(content) < 2:
+            raise forms.ValidationError("Comment is too short.")
+        return content
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
