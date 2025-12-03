@@ -2,16 +2,19 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
-from .models import Post
+from .models import Post, Tag
+from django.utils.text import slugify
+
 
 class PostForm(forms.ModelForm):
+     tags = forms.CharField(required=False, help_text="Comma-separated tags")
 class Meta:
-model = Post
-fields = ['title', 'content']
-widgets = {
-'title': forms.TextInput(attrs={'class': 'form-control'}),
-'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
-}
+     model = Post
+     fields = ['title', 'content', 'slug', 'tags']
+     widgets = {
+     'title': forms.TextInput(attrs={'class': 'form-control'}),
+     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
+      }
 
 class CommentForm(forms.ModelForm):
     content = forms.CharField(
@@ -31,6 +34,15 @@ class CommentForm(forms.ModelForm):
         if len(content) < 2:
             raise forms.ValidationError("Comment is too short.")
         return content
+
+    def __init__(self, *args, **kwargs):
+        # if editing, prepopulate tags field
+        instance = kwargs.get('instance')
+        initial = kwargs.get('initial', {})
+        if instance:
+            initial['tags'] = ', '.join(t.name for t in instance.tags.all())
+            kwargs['initial'] = initial
+        super().__init__(*args, **kwargs)
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -59,3 +71,21 @@ class UserUpdateForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+    def clean_tags(self):
+        data = self.cleaned_data.get('tags', '')
+        # normalize and return list of names
+        names = [t.strip() for t in data.split(',') if t.strip()]
+        return names
+
+    def save(self, commit=True):
+        names = self.cleaned_data.pop('tags', [])
+        post = super().save(commit=commit)
+        # create or get tags then set m2m
+        tag_objs = []
+        for name in names:
+            slug = slugify(name)
+            tag_obj, _ = Tag.objects.get_or_create(name=name, defaults={'slug': slug})
+            tag_objs.append(tag_obj)
+        post.tags.set(tag_objs)
+        return post

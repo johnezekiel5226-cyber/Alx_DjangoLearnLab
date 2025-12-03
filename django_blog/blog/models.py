@@ -4,19 +4,22 @@ from django.conf import settings
 from django.urls import reverse
 
 class Post(models.Model):
-   # Assuming your existing Post model looks something like this
-    # title = models.CharField(...)
-    # body = models.TextField(...)
-    # author = models.ForeignKey(User, ...)
-    # ... etc.
-
     title = models.CharField(max_length=200)
     content = models.TextField()
+    slug = models.SlugField(unique=True)
+    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
     settings.AUTH_USER_MODEL, related_name='posts', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=60, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Comment(models.Model):
     post = models.ForeignKey('Post', related_name='comments', on_delete=models.CASCADE)
