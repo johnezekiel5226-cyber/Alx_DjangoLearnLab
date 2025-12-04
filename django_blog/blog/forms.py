@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from .models import Profile
 from .models import Post, Tag
 from django.utils.text import slugify
-
+from taggit.forms import TagWidget
 
 class PostForm(forms.ModelForm):
      tags = forms.CharField(required=False, help_text="Comma-separated tags")
@@ -12,6 +12,7 @@ class Meta:
      model = Post
      fields = ['title', 'content', 'slug', 'tags']
      widgets = {
+     'tags': TagWidget(),
      'title': forms.TextInput(attrs={'class': 'form-control'}),
      'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
       }

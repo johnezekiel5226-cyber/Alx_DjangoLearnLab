@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.urls import reverse
+from taggit.managers import TaggableManager
+
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
@@ -13,6 +15,7 @@ class Post(models.Model):
     settings.AUTH_USER_MODEL, related_name='posts', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    tags = TaggableManager()
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
