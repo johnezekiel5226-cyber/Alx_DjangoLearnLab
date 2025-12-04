@@ -2,11 +2,12 @@ from django.urls import path
 from .views import register
 from . import views
 from .views import (
-PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
-)
+PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, PostByTagListView)
+
 
 app_name = 'posts'
 urlpatterns = [
+path("tags/<slug:tag_slug>/", PostByTagListView.as_view(), name="posts_by_tag"),
 path('posts/', PostListView.as_view(), name='post-list'),
 path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
 path('posts/<int:pk>/edit/', PostUpdateView.as_view(), name='post-update'),
