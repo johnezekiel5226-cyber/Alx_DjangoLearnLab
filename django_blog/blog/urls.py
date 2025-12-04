@@ -24,6 +24,8 @@ path('<int:post_id>/comments/<int:pk>/delete/', views.CommentDeleteView.as_view(
 path('post/<int:pk>/comments/new/', CommentCreateView.as_view(), name='comment_new'),
 path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment_update'),
 path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment_delete'),
+path("search/", post_search, name="post_search"),
+
 ]
 
 

@@ -7,9 +7,28 @@ from django.views.generic import (
 ListView, DetailView, CreateView, UpdateView, DeleteView)
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from .models import Post, comment
 from .forms import PostForm
 from .forms import CommentForm
+from django.shortcuts import render
+from django.db.models import Q
+from .models import Post, comment
+
+
+def post_search(request):
+    query = request.GET.get("q")
+    results = []
+
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, "blog/post_search.html", {
+        "query": query,
+        "results": results,
+    })
 
 class PostDetailView(DetailView):
     model = Post
