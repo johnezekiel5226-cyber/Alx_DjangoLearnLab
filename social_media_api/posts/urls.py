@@ -15,4 +15,6 @@ urlpatterns += router.urls
 urlpatterns = [
     path('<int:post_id>/like/', LikePostView.as_view(), name='like-post'),
     path('<int:post_id>/unlike/', UnlikePostView.as_view(), name='unlike-post'),
+    path('<int:pk>/like/', ToggleLikeView.as_view(), name='toggle-like'),
+    path('<int:pk>/unlike/', UnlikePostView.as_view(), name='unlike-post'),
 ]
