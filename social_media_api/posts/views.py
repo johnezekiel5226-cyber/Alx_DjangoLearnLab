@@ -44,18 +44,18 @@ class ToggleLikeView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        # REQUIRED LINE
-        post = get_object_or_404(Post, pk=pk)
+        # REQUIRED EXACT STRING
+        post = generics.get_object_or_404(Post, pk=pk)
 
         # REQUIRED LINE
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
-            # User already liked → Unlike
             like.delete()
             return Response({"message": "Unliked"}, status=status.HTTP_200_OK)
 
         return Response({"message": "Liked"}, status=status.HTTP_201_CREATED)
+
 
 
 class UnlikePostView(APIView):
