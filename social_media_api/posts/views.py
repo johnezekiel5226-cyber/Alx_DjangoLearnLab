@@ -36,7 +36,7 @@ class LikePostView(APIView):
                 recipient=post.author,
                 actor=user,
                 verb="liked your post",
-                target=post
+                target=post)
 
 class ToggleLikeView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -54,12 +54,6 @@ class ToggleLikeView(generics.GenericAPIView):
             return Response({"message": "Unliked"}, status=status.HTTP_200_OK)
 
         return Response({"message": "Liked"}, status=status.HTTP_201_CREATED)
-
-
-
-            )
-
-        return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
 
 class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
