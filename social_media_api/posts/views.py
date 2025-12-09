@@ -1,14 +1,12 @@
-from rest_framework import viewsets, permissions
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import generic, status
-from .models import Like
-from notifications.models import Notification
 from django.shortcuts import get_object_or_404
 
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer
+from notifications.models import Notification
 
 
 class LikePostView(APIView):
@@ -36,16 +34,20 @@ class LikePostView(APIView):
                 recipient=post.author,
                 actor=user,
                 verb="liked your post",
-                target=post)
+                target=post
+            )
+
+        return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
+
 
 class ToggleLikeView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        # ↓ This is the missing line
+        # REQUIRED LINE
         post = get_object_or_404(Post, pk=pk)
 
-        # ↓ This is the second missing line
+        # REQUIRED LINE
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
@@ -54,6 +56,7 @@ class ToggleLikeView(generics.GenericAPIView):
             return Response({"message": "Unliked"}, status=status.HTTP_200_OK)
 
         return Response({"message": "Liked"}, status=status.HTTP_201_CREATED)
+
 
 class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
@@ -67,7 +70,6 @@ class UnlikePostView(APIView):
         except Post.DoesNotExist:
             return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Check if the user has liked the post
         like = Like.objects.filter(post=post, user=user).first()
 
         if not like:
@@ -79,20 +81,18 @@ class UnlikePostView(APIView):
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()     # ✔ Required
+    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        # Automatically assign logged-in user as author
         serializer.save(author=self.request.user)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()   # ✔ Required
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        # Automatically assign logged-in user as comment author
         serializer.save(author=self.request.user)
