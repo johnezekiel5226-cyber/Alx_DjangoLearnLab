@@ -37,9 +37,14 @@ class LikePostView(APIView):
                 actor=user,
                 verb="liked your post",
                 target=post
+	post = generics.get_object_or_404(Post, pk=pk)
+	like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+
             )
 
         return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
+
 class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
