@@ -37,8 +37,24 @@ class LikePostView(APIView):
                 actor=user,
                 verb="liked your post",
                 target=post
-	post = generics.get_object_or_404(Post, pk=pk)
-	like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+class ToggleLikeView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        # ↓ This is the missing line
+        post = get_object_or_404(Post, pk=pk)
+
+        # ↓ This is the second missing line
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if not created:
+            # User already liked → Unlike
+            like.delete()
+            return Response({"message": "Unliked"}, status=status.HTTP_200_OK)
+
+        return Response({"message": "Liked"}, status=status.HTTP_201_CREATED)
+
 
 
             )
